@@ -86,7 +86,7 @@ function Applications() {
     <div>
       <PageTitle
         title="Company applications"
-        description="Every company that registers appears here. Check the details and documents, then approve or reject."
+        subtitle="Every company that registers appears here. Check the details and documents, then approve or reject."
       />
 
       <div className="grid gap-4 sm:grid-cols-3">
