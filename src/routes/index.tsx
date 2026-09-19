@@ -175,7 +175,7 @@ function Home() {
             Create your account and start recording collections and payments today.
           </p>
           <Button asChild size="lg" className="mt-8">
-            <Link to="/auth">Get started</Link>
+            <Link to="/register">Register your company</Link>
           </Button>
         </div>
       </section>
