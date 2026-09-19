@@ -12,6 +12,9 @@ import {
   Receipt,
   ArrowRight,
   CheckCircle2,
+  ClipboardCheck,
+  Clock,
+  Building,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PageTitle } from "@/components/AppShell";
@@ -61,6 +64,10 @@ function useDashboardData(companyId: string | null, scoped: boolean) {
           supabase.from("profiles").select("id, full_name, position, status"),
           supabase.from("vehicles").select("id, plate_number, status"),
         ]);
+      const { count: pendingApps } = await supabase
+        .from("company_applications")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "pending");
 
       const rows = (payments.data ?? []) as Payment[];
       const paid = rows.filter((p) => p.status === "paid");
@@ -91,6 +98,7 @@ function useDashboardData(companyId: string | null, scoped: boolean) {
         activeSubs: (subs.data ?? []).filter((s) => s.status === "active").length,
         staff: staff.data ?? [],
         vehicles: vehicles.data ?? [],
+        pendingApps: pendingApps ?? 0,
       };
     },
   });
@@ -201,6 +209,8 @@ function Dashboard() {
 
       {isAdmin ? (
         <AdminView data={data} activeCompanies={activeCompanies} />
+      ) : role === "company_admin" && !companyId ? (
+        <PendingCompanyView />
       ) : role === "company_admin" ? (
         <CompanyView data={data} />
       ) : (
@@ -212,9 +222,40 @@ function Dashboard() {
 
 type Data = ReturnType<typeof useDashboardData>["data"];
 
+function PendingCompanyView() {
+  return (
+    <div className="surface-card mx-auto max-w-xl p-10 text-center">
+      <span className="green-gradient mx-auto flex size-14 items-center justify-center rounded-2xl">
+        <Clock className="size-7" />
+      </span>
+      <h2 className="mt-5 font-display text-xl font-semibold">Your application is being reviewed</h2>
+      <p className="mt-2 text-sm text-muted-foreground">
+        The administrator is checking your company details and documents. As soon as it is approved,
+        your company dashboard, staff and customer tools will unlock here automatically.
+      </p>
+    </div>
+  );
+}
+
 function AdminView({ data, activeCompanies }: { data: Data; activeCompanies: number }) {
   return (
     <>
+      {data?.pendingApps ? (
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-primary/40 bg-accent p-4">
+          <div className="flex items-center gap-3">
+            <ClipboardCheck className="size-5 text-primary" />
+            <p className="text-sm">
+              <span className="font-semibold">{data.pendingApps}</span> company application
+              {data.pendingApps > 1 ? "s are" : " is"} waiting for your review.
+            </p>
+          </div>
+          <Button asChild size="sm">
+            <Link to="/applications">
+              Review now <ArrowRight className="size-3.5" />
+            </Link>
+          </Button>
+        </div>
+      ) : null}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           label="Companies"
@@ -246,6 +287,26 @@ function AdminView({ data, activeCompanies }: { data: Data; activeCompanies: num
           hint={`${data?.pendingCount ?? 0} pending`}
         />
         <StatCard label="Vehicles in the system" value={data?.vehicles.length ?? 0} icon={Truck} />
+      </div>
+
+      <div className="mt-6 grid gap-3 sm:grid-cols-3">
+        {[
+          { to: "/applications", label: "Review applications", icon: ClipboardCheck },
+          { to: "/companies", label: "Manage companies", icon: Building },
+          { to: "/staff", label: "Create an account", icon: UserCog },
+        ].map((q) => (
+          <Link
+            key={q.to}
+            to={q.to}
+            className="surface-card flex items-center gap-3 p-4 text-sm font-medium transition-colors hover:border-primary/60"
+          >
+            <span className="green-gradient flex size-9 items-center justify-center rounded-lg">
+              <q.icon className="size-4" />
+            </span>
+            {q.label}
+            <ArrowRight className="ml-auto size-4 text-muted-foreground" />
+          </Link>
+        ))}
       </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
