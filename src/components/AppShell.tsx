@@ -10,6 +10,7 @@ import {
   Wallet,
   BarChart3,
   LogOut,
+  ClipboardCheck,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,7 @@ const navItems: NavItem[] = [
     icon: LayoutDashboard,
     roles: ["admin", "company_admin", "employee", "driver", "customer"],
   },
+  { to: "/applications", label: "Applications", icon: ClipboardCheck, roles: ["admin"] },
   { to: "/companies", label: "Companies", icon: Building2, roles: ["admin"] },
   {
     to: "/customers",

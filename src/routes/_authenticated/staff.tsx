@@ -60,6 +60,7 @@ function Staff() {
           full_name: get("full_name"),
           phone: get("phone"),
           position: get("position"),
+          employee_type: (get("employee_type") || null) as "office" | "field" | null,
           license_number: get("license_number"),
           role: get("role") as "employee" | "driver" | "company_admin",
           company_id: role === "admin" ? get("company_id") || null : null,
@@ -113,11 +114,24 @@ function Staff() {
                     defaultValue="employee"
                     className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
                   >
-                    <option value="employee">Employee (office / field)</option>
+                    <option value="employee">Employee</option>
                     <option value="driver">Driver</option>
                     <option value="company_admin">Company manager</option>
                   </select>
                 </div>
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="s-type">Employee type</Label>
+                <select
+                  id="s-type"
+                  name="employee_type"
+                  defaultValue="office"
+                  className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                >
+                  <option value="office">Office employee</option>
+                  <option value="field">Field employee</option>
+                </select>
+                <p className="text-xs text-muted-foreground">Only applies to the Employee role.</p>
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="space-y-1.5">
@@ -167,6 +181,7 @@ function Staff() {
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
+              <TableHead>Type</TableHead>
               <TableHead>Position</TableHead>
               <TableHead>Phone</TableHead>
               <TableHead>Company</TableHead>
@@ -177,7 +192,16 @@ function Staff() {
             {(staff ?? []).map((s) => (
               <TableRow key={s.id}>
                 <TableCell className="font-medium">{s.full_name || "—"}</TableCell>
-                <TableCell>{s.position ?? (s.license_number ? "Driver" : "—")}</TableCell>
+                <TableCell>
+                  {s.employee_type ? (
+                    <Badge variant="secondary" className="capitalize">{s.employee_type}</Badge>
+                  ) : s.license_number ? (
+                    <Badge variant="secondary">Driver</Badge>
+                  ) : (
+                    "—"
+                  )}
+                </TableCell>
+                <TableCell>{s.position ?? "—"}</TableCell>
                 <TableCell>{s.phone ?? "—"}</TableCell>
                 <TableCell>{s.companies?.name ?? "—"}</TableCell>
                 <TableCell>

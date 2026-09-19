@@ -40,7 +40,7 @@ export function SiteHeader() {
                 <Link to="/auth">Sign in</Link>
               </Button>
               <Button asChild>
-                <Link to="/auth" search={{ mode: "signup" }}>
+                <Link to="/register">
                   Get started
                 </Link>
               </Button>
@@ -55,7 +55,7 @@ export function SiteHeader() {
 export function SiteFooter() {
   return (
     <footer className="border-t border-border bg-sidebar">
-      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 text-sm text-muted-foreground md:grid-cols-3">
+      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 text-sm text-muted-foreground md:grid-cols-4">
         <div>
           <p className="font-display text-base font-semibold text-foreground">Isuku Route System</p>
           <p className="mt-2 max-w-xs">
@@ -72,6 +72,18 @@ export function SiteFooter() {
           </Link>
           <Link to="/auth" className="block hover:text-foreground">
             Sign in
+          </Link>
+          <Link to="/register" className="block hover:text-foreground">
+            Register company
+          </Link>
+        </div>
+        <div className="space-y-2">
+          <p className="font-medium text-foreground">Legal</p>
+          <Link to="/terms" className="block hover:text-foreground">
+            Terms &amp; Conditions of Use
+          </Link>
+          <Link to="/privacy" className="block hover:text-foreground">
+            Privacy Notice
           </Link>
         </div>
         <div className="space-y-2">

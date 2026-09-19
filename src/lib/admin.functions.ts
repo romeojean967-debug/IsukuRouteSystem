@@ -8,6 +8,7 @@ const createUserSchema = z.object({
   full_name: z.string().min(1),
   phone: z.string().optional(),
   position: z.string().optional(),
+  employee_type: z.enum(["office","field"]).nullable().optional(),
   license_number: z.string().optional(),
   company_id: z.string().uuid().nullable().optional(),
   role: z.enum(["admin", "company_admin", "employee", "driver", "customer"]),
@@ -53,6 +54,7 @@ export const createUserAccount = createServerFn({ method: "POST" })
       phone: data.phone ?? null,
       company_id: companyId,
       position: data.position ?? null,
+      employee_type: data.role === "employee" ? (data.employee_type ?? "office") : null,
       license_number: data.license_number ?? null,
     });
 
